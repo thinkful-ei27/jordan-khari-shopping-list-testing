@@ -61,7 +61,49 @@ describe('recipes', function(){
       });
   });
 
+  it('should update items on PUT to recipes', function() {
+    const updateData = {
+      name: 'lunch',
+      ingredients: ['bread', 'meat', 'cheese' ]
+    };
 
+    return (
+      chai
+        .request(app)
+        .get('/recipes')
+        .then(function(res) {
+          updateData.id= res.body[0].id;
+
+          return chai
+            .request(app)
+            .put(`/recipes/${updateData.id}`)
+            .send(updateData);
+
+        })
+        .then(function(res) {
+          expect(res).to.have.status(200);
+          expect(res).to.be.json;
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.deep.equal(updateData);
+        })
+    );
+  });
+
+  it('should recipes on delete', function () {
+    return (
+      chai
+        .request(app)
+        .get('/recipes')
+        .then(function(res) {
+          return chai
+            .request(app)
+            .delete(`/recipes/${res.body[0].id}`);
+        })
+        .then(function(res) {
+          expect(res).to.have.status(204);
+        })
+    );
+  });
   
 
 });
